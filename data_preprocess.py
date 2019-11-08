@@ -4,13 +4,6 @@ import kfbReader
 import cv2
 import random
 from copy import deepcopy
-# a = [{"x":1, "y":1}, {"x":2, "y":2}, {"x":3, "y":3},]
-# b = deepcopy(a)
-# b.append({"x":4, "y":4},)
-# b[0]["z"] = 1
-# print(a)
-# print(b)
-# exit(0)
 
 def is_left_top_in_image(label, image):
     return (image["x"] < label["x"] < image["x"] + image["w"]) and \
