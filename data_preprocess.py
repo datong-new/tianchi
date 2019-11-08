@@ -32,7 +32,7 @@ def create_pos_data(label_path, kfb_path):
     scale = 20
     reader.ReadInfo(kfb_path, scale, False)
 
-    filename = "T2019_976"
+    filename = kfb_path.split("/")[-1].split(".")[0]
     pos_labels = [label for label in labels if label["class"]=="pos"]
     WIDTH, HEIGHT, DELTA = 1000, 1000, 500
 
@@ -117,6 +117,6 @@ def create_pos_data(label_path, kfb_path):
 
 label_path = "/data/DigitalBody/labels/T2019_976.json"
 kfb_path = "/data/DigitalBody/pos_4/T2019_976.kfb"
+print(kfb_path.split("/")[-1].split(".")[0])
 
 create_pos_data(label_path, kfb_path)
-
