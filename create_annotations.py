@@ -10,7 +10,7 @@ def create_annotations(filename, label_json):
     xml_object = ""
     for lbl in label_json:
         xml_object += CONSTANT.PASCAL_OBJECT.format(
-            int(lbl["truncated"]) , lbl["x"], lbl["y"], lbl["x"]+lbl["w"], lbl["y"]+lbl["h"])
+            int(lbl["truncated"]) , lbl["new_x"], lbl["new_y"], lbl["new_x"]+lbl["new_w"], lbl["new_y"]+lbl["new_h"])
         xml_object += "\n"
     xml = CONSTANT.PASCAL_XML_HEADER.format(filename+".jpg") + \
            xml_object + CONSTANT.PASCAL_XML_FOOTER
