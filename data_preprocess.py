@@ -4,6 +4,10 @@ import kfbReader
 import cv2
 import random
 from copy import deepcopy
+from tianchi.create_annotations import store_annotation
+from tianchi.create_annotations import create_annotations
+from tianchi import CONSTANT
+
 
 def is_left_top_in_image(label, image):
     return (image["x"] < label["x"] < image["x"] + image["w"]) and \
@@ -40,10 +44,6 @@ WIDTH, HEIGHT, DELTA = 1000, 1000, 500
 
 
 for i, label in enumerate(pos_labels):
-    # roi = reader.ReadRoi(label["x"], label["y"], label["w"], label["h"], 20)
-    # cv2.rectangle(roi, (label["x"], label["y"]), (label["x"]+label["w"], label["y"]+label["h"]), (255,0,0), 30)
-    # cv2.imwrite(str(i)+".jpg", roi)
-    # continue
     count = 0
     while count<3:
         w_delta = random.randrange(-DELTA, DELTA)
@@ -81,34 +81,39 @@ for i, label in enumerate(pos_labels):
                 lbl["new_y"] = lbl["y"] - image["y"]
                 lbl["new_w"] = min(image["x"] + image["w"] - lbl["x"], lbl["w"])
                 lbl["new_h"] = min(image["y"] + image["h"] - lbl["y"], lbl["h"])
-                truncated = True if (lbl["new_w"] != lbl["w"] or lbl["new_h"] != lbl["h"]) else False
+                lbl["truncated"] = True if (lbl["new_w"] != lbl["w"] or lbl["new_h"] != lbl["h"]) else False
             elif is_right_top_in_image(lbl, image):
                 lbl["new_x"] = 0
                 lbl["new_y"] = lbl["y"] - image["y"]
                 lbl["new_w"] = lbl["w"] - (image["x"]-lbl["x"])
                 lbl["new_h"] = min(image["y"] + image["h"] - lbl["y"], lbl["h"])
-                truncated = True
+                lbl["truncated"] = True
             elif is_left_down_in_image(lbl, image):
                 lbl["new_x"] = lbl["x"] - image["x"]
                 lbl["new_y"] = 0
                 lbl["new_w"] = min(image["x"] + image["w"] - lbl["x"], lbl["w"])
                 lbl["new_h"] = lbl["h"] - (image["y"]-lbl["y"])
-                truncated = True
+                lbl["truncated"] = True
             elif is_right_down_in_image(lbl, image):
                 lbl["new_x"], lbl["new_y"] = 0, 0
                 lbl["new_w"] = lbl["w"] - (image["x"]-lbl["x"])
                 lbl["new_h"] = lbl["h"] - (image["y"] - lbl["y"])
-                truncated = True
+                lbl["truncated"] = True
             if "new_w" in lbl:
                 cv2.rectangle(roi, (lbl["new_x"],lbl["new_y"]),
                               (lbl["new_x"]+lbl["new_w"],lbl["new_y"]+lbl["new_h"]), (255,0,0), 2)
-                lbl_json.append(lbl)
+
+                """
+                If the clopped label loss too much information, then discard it.
+                That is, only conserve the label with enough information.
+                """
+                if not (lbl["new_w"]<lbl["w"]/2 or lbl["new_h"] < lbl["h"]/2):
+                    lbl_json.append(lbl)
         ## Record image and label
         if len(lbl_json)>0:
-            json = {"filename": filename, "id": i, "image": image, "label": lbl_json}
-            print(image)
-            print(lbl_json)
-            cv2.imwrite(filename + "_" + str(i) + "_"+str(count)+ ".jpg", roi)
+            anno_file = filename + "_" + str(i) + "_"+str(count)
+            store_annotation(anno_file, lbl_json)
+            create_annotations(anno_file, lbl_json)
+            cv2.imwrite(CONSTANT.POS_IMAGE_PATH+anno_file+ ".jpg", roi)
             count+=1
 
-# cv2.imwrite("mytest.jpg", roi)
