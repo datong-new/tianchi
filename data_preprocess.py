@@ -119,3 +119,4 @@ label_path = "/data/DigitalBody/labels/T2019_976.json"
 kfb_path = "/data/DigitalBody/pos_4/T2019_976.kfb"
 
 create_pos_data(label_path, kfb_path)
+
