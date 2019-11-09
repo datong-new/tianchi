@@ -40,6 +40,7 @@ def create_pos_data(label_path, kfb_path):
     for i, label in enumerate(pos_labels):
         count = 0
         while count<3:
+            is_truncated_too_small = False
             w_delta = random.randrange(-DELTA, DELTA)
             h_delta = random.randrange(-DELTA, DELTA)
             roi_x, roi_y, roi_w, roi_h = label["x"], label["y"], label["w"], label["h"]
@@ -103,8 +104,13 @@ def create_pos_data(label_path, kfb_path):
                     """
                     if not (lbl["new_w"]<lbl["w"]/2 or lbl["new_h"] < lbl["h"]/2):
                         lbl_json.append(lbl)
+                    else:
+                        is_truncated_too_small = True
+                        break
             ## Record image and label
-            if len(lbl_json)>0:
+            if is_truncated_too_small:
+                continue
+            elif len(lbl_json)>0:
                 anno_file = filename + "_" + str(i) + "_"+str(count)
                 store_annotation(anno_file, lbl_json)
                 create_annotations(anno_file, lbl_json)
@@ -112,11 +118,11 @@ def create_pos_data(label_path, kfb_path):
                 count+=1
 
 
-# label_path = "/data/DigitalBody/labels/T2019_198.json"
-# kfb_path = "/data/DigitalBody/pos_0/T2019_198.kfb"
+label_path = "/data/DigitalBody/labels/T2019_198.json"
+kfb_path = "/data/DigitalBody/pos_0/T2019_198.kfb"
 
-label_path = "/data/DigitalBody/labels/T2019_976.json"
-kfb_path = "/data/DigitalBody/pos_4/T2019_976.kfb"
+#label_path = "/data/DigitalBody/labels/T2019_976.json"
+#kfb_path = "/data/DigitalBody/pos_4/T2019_976.kfb"
 print(kfb_path.split("/")[-1].split(".")[0])
 
 create_pos_data(label_path, kfb_path)
