@@ -118,11 +118,19 @@ def create_pos_data(label_path, kfb_path):
                 count+=1
 
 
-label_path = "/data/DigitalBody/labels/T2019_198.json"
-kfb_path = "/data/DigitalBody/pos_0/T2019_198.kfb"
+# label_path = "/data/DigitalBody/labels/T2019_198.json"
+# kfb_path = "/data/DigitalBody/pos_0/T2019_198.kfb"
 
-#label_path = "/data/DigitalBody/labels/T2019_976.json"
-#kfb_path = "/data/DigitalBody/pos_4/T2019_976.kfb"
-print(kfb_path.split("/")[-1].split(".")[0])
+for i in range(10):
+    label_dir = "/data/DigitalBody/labels"
+    kfb_dir = "/data/DigitalBody/pos_" + i
+    kfb_files = os.listdir(kfb_dir)
 
-create_pos_data(label_path, kfb_path)
+    for kfb_file in kfb_files:
+        kfb_path = kfb_dir + "/" + kfb_file
+        label_path = label_dir + "/" + kfb_path.split("/")[-1].split(".")[0] + ".json"
+# label_path = "/data/DigitalBody/labels/T2019_976.json"
+# kfb_path = "/data/DigitalBody/pos_4/T2019_976.kfb"
+        print("Processing "+ kfb_path + "...")
+        create_pos_data(label_path, kfb_path)
+
