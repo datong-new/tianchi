@@ -123,7 +123,7 @@ def create_pos_data(label_path, kfb_path):
 
 for i in range(10):
     label_dir = "/data/DigitalBody/labels"
-    kfb_dir = "/data/DigitalBody/pos_" + i
+    kfb_dir = "/data/DigitalBody/pos_" + str(i)
     kfb_files = os.listdir(kfb_dir)
 
     for kfb_file in kfb_files:
