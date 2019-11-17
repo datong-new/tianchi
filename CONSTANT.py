@@ -43,6 +43,15 @@ PASCAL_OBJECT = """
     </object>
 """
 
-# print(PASCAL_XML_HEADER)
-# print(PASCAL_OBJECT.format(0, 100, 100, 100, 100))
-# print(PASCAL_XML_FOOTER)
+COCO_INFO = {
+    "info": {
+        "description": "COCO 2017 Dataset",
+        "url": "http://cocodataset.org",
+        "version": "1.0",
+        "year": 2017,
+        "contributor": "COCO Consortium",
+        "date_created": "2017/09/01"
+    }
+}
+
+print(COCO_INFO)
