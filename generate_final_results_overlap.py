@@ -1,44 +1,68 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
+import sys
 import json
 from nms.gpu_nms import gpu_nms
+from pycocotools.coco import COCO
+import numpy as np
 
-def nms(dets, thresh):
-    "Dispatch to either CPU or GPU NMS implementations. Accept dets as tensor"""
-    dets = dets.cpu().numpy()
-    return gpu_nms(dets, thresh)
-
-
-json_dir = "/data/DigitalBody/tests/result_json"
-final_results_dir = "/data/DigitalBody/tests/final_results"
 
 WIDTH, HEIGHT = 1000, 1000
 STRIDE_X, STRIDE_Y = 750, 750 
-THRESHOLD = 0.05
+NMS_THRESH, THRESHOLD = 0.5, 0.05
 
-labels = {}
-json_files = os.listdir(json_dir)
-for json_file in json_files:
-    s = json_file.split('.')[0].split('_')
-    i, j = int(s[2]), int(s[3])
-    index = s[0] + '_' + s[1]
-    labels[index] = []
 
-for json_file in json_files:
-    s = json_file.split('.')[0].split('_')
-    i, j = int(s[2]), int(s[3])
-    index = s[0] + '_' + s[1]
-    with open(json_dir + '/' + json_file, "r") as f:
-        content = json.load(f)
-        if len(content):
-            for label in content:
-                label["x"] += WIDTH * i
-                label["y"] += HEIGHT * j
-                if label["p"] > THRESHOLD:
-                    labels[index].append(label)
+def json2dict(result_json, coco):
+    bboxes_dict = dict()
+    for detec in result_json:
+        img_id = detec['image_id']
+        img_name = coco.loadImgs(img_id)[0]['file_name']
+        img_name_split = img_name.split('.')[0].split('_')
+        kfb_name = '_'.join(img_name_split[0:2])
+        if kfb_name not in bboxes_dict.keys():
+            bboxes_dict[kfb_name] = []
+        bbox = []
+        if detec['score'] > THRESHOLD:
+            i, j = int(img_name_split[2]), int(img_name_split[3])
+            bbox.append(STRIDE_X * i + detec['bbox'][0])
+            bbox.append(STRIDE_Y * j + detec['bbox'][1])
+            bbox.append(bbox[0] + detec['bbox'][2])
+            bbox.append(bbox[1] + detec['bbox'][3])
+            bbox.append(detec['score'])
+        bboxes_dict[kfb_name].append(bbox)
+    return bboxes_dict
 
-for index in labels:
-    print(index, labels[index])
-    with open(final_results_dir + '/' + index + ".json", "w") as output:
-        json.dump(labels[index], output)
+
+def nms_bboxes_dict(bboxes_dict):
+    for kfb_name, bboxes in bboxes_dict.items():
+        bboxes = np.array(bboxes).astype(np.float32)
+        keep = gpu_nms(bboxes, NMS_THRESH)
+        bboxes_dict[kfb_name] = []
+        for bbox in bboxes[keep]:
+            bbox_new = dict()
+            bbox_new['x'] = int(bbox[0])
+            bbox_new['y'] = int(bbox[1])
+            bbox_new['w'] = max(int(bbox[2] - bbox[0]), 1)
+            bbox_new['h'] = max(int(bbox[3] - bbox[1]), 1)
+            bbox_new['p'] = float(bbox[4])
+            bboxes_dict[kfb_name].append(bbox_new)
+    return bboxes_dict 
+
 
 if __name__ == "__main__":
+    ann_file = "/data/DigitalBody/pos_images/VOC2012/coco_test_annotation.json"
+    res_json_file = '/data/DigitalBody/pos_images/result_file.pkl.bbox.json'
+    final_res_dir = "/data/DigitalBody/tests/final_results"
+    # ann_file, res_json_file, final_res_dir = sys.argv[1], sys.argv[2], sys.argv[3]
+    coco = COCO(annFile)
+    with open(result_json_file, 'r') as f:
+        result_json = json.load(f)
+    bboxes_dict = nms_bboxes_dict(json2dict(result_json, coco))
+    for kfb_name in bboxes_dict:
+        print(kfb_name, bboxes_dict[kfb_name])
+        with open(final_res_dir + '/' + kfb_name + ".json", "w") as output:
+            json.dump(bboxes_dict[kfb_name], output)
+
+
