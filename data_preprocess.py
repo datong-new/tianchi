@@ -38,8 +38,8 @@ def create_pos_data(label_path, kfb_path):
 
 
     for i, label in enumerate(pos_labels):
-        count = 0
-        while count<3:
+        count = 3
+        while count<10:
             is_truncated_too_small = False
             w_delta = random.randrange(-DELTA, DELTA)
             h_delta = random.randrange(-DELTA, DELTA)
@@ -95,8 +95,8 @@ def create_pos_data(label_path, kfb_path):
                     lbl["new_h"] = lbl["h"] - (image["y"] - lbl["y"])
                     lbl["truncated"] = True
                 if "new_w" in lbl:
-                    cv2.rectangle(roi, (lbl["new_x"],lbl["new_y"]),
-                                  (lbl["new_x"]+lbl["new_w"],lbl["new_y"]+lbl["new_h"]), (255,0,0), 2)
+                #    cv2.rectangle(roi, (lbl["new_x"],lbl["new_y"]),
+                #                  (lbl["new_x"]+lbl["new_w"],lbl["new_y"]+lbl["new_h"]), (255,0,0), 2)
 
                     """
                     If the clopped label loss too much information, then discard it.
