@@ -1,6 +1,6 @@
-POS_ANNOTATION_PATH = "/data/DigitalBody/pos_images/Annotations/"
-POS_IMAGE_PATH = "/data/DigitalBody/pos_images/JPEGImages/"
-POS_JSON_PATH = "/data/DigitalBody/pos_images/JSON/"
+POS_ANNOTATION_PATH = "/data/DigitalBody/pos_images/VOC2012/Annotations/"
+POS_IMAGE_PATH = "/data/DigitalBody/pos_images/VOC2012/JPEGImages/"
+POS_JSON_PATH = "/data/DigitalBody/pos_images/VOC2012/JSON/"
 
 
 PASCAL_XML_HEADER = """
@@ -43,6 +43,35 @@ PASCAL_OBJECT = """
     </object>
 """
 
-# print(PASCAL_XML_HEADER)
-# print(PASCAL_OBJECT.format(0, 100, 100, 100, 100))
-# print(PASCAL_XML_FOOTER)
+
+COCODATASET_PATH = "/data/DigitalBody/pos_images/coco_annotation.json"
+COCODATASET = {}
+COCODATASET["info"] = \
+    {
+        "description": "COCO 2017 Dataset",
+        "url": "http://cocodataset.org",
+        "version": "1.0",
+        "year": 2017,
+        "contributor": "COCO Consortium",
+        "date_created": "2017/09/01"
+    }
+
+COCODATASET["licence"] = [
+    {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+    },
+    {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+    }
+]
+
+COCODATASET["categories"] = [
+    {"supercategory": "abnormal_cell","id": 1,"name": "abnormal_cell"},
+    #{"supercategory": "vehicle","id": 2,"name": "bicycle"},
+]
+
+# print(COCODATASET)

@@ -38,8 +38,8 @@ def create_pos_data(label_path, kfb_path):
 
 
     for i, label in enumerate(pos_labels):
-        count = 0
-        while count<3:
+        count = 3
+        while count<10:
             is_truncated_too_small = False
             w_delta = random.randrange(-DELTA, DELTA)
             h_delta = random.randrange(-DELTA, DELTA)
@@ -95,8 +95,8 @@ def create_pos_data(label_path, kfb_path):
                     lbl["new_h"] = lbl["h"] - (image["y"] - lbl["y"])
                     lbl["truncated"] = True
                 if "new_w" in lbl:
-                    cv2.rectangle(roi, (lbl["new_x"],lbl["new_y"]),
-                                  (lbl["new_x"]+lbl["new_w"],lbl["new_y"]+lbl["new_h"]), (255,0,0), 2)
+                #    cv2.rectangle(roi, (lbl["new_x"],lbl["new_y"]),
+                #                  (lbl["new_x"]+lbl["new_w"],lbl["new_y"]+lbl["new_h"]), (255,0,0), 2)
 
                     """
                     If the clopped label loss too much information, then discard it.
@@ -118,11 +118,19 @@ def create_pos_data(label_path, kfb_path):
                 count+=1
 
 
-label_path = "/data/DigitalBody/labels/T2019_198.json"
-kfb_path = "/data/DigitalBody/pos_0/T2019_198.kfb"
+# label_path = "/data/DigitalBody/labels/T2019_198.json"
+# kfb_path = "/data/DigitalBody/pos_0/T2019_198.kfb"
 
-#label_path = "/data/DigitalBody/labels/T2019_976.json"
-#kfb_path = "/data/DigitalBody/pos_4/T2019_976.kfb"
-print(kfb_path.split("/")[-1].split(".")[0])
+for i in range(10):
+    label_dir = "/data/DigitalBody/labels"
+    kfb_dir = "/data/DigitalBody/pos_" + str(i)
+    kfb_files = os.listdir(kfb_dir)
 
-create_pos_data(label_path, kfb_path)
+    for kfb_file in kfb_files:
+        kfb_path = kfb_dir + "/" + kfb_file
+        label_path = label_dir + "/" + kfb_path.split("/")[-1].split(".")[0] + ".json"
+# label_path = "/data/DigitalBody/labels/T2019_976.json"
+# kfb_path = "/data/DigitalBody/pos_4/T2019_976.kfb"
+        print("Processing "+ kfb_path + "...")
+        create_pos_data(label_path, kfb_path)
+
