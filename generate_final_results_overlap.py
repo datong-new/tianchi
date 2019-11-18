@@ -23,15 +23,15 @@ def json2dict(result_json, coco):
         kfb_name = '_'.join(img_name_split[0:2])
         if kfb_name not in bboxes_dict.keys():
             bboxes_dict[kfb_name] = []
-        bbox = []
         if detec['score'] > THRESHOLD:
+            bbox = []
             i, j = int(img_name_split[2]), int(img_name_split[3])
             bbox.append(STRIDE_X * i + detec['bbox'][0])
             bbox.append(STRIDE_Y * j + detec['bbox'][1])
             bbox.append(bbox[0] + detec['bbox'][2])
             bbox.append(bbox[1] + detec['bbox'][3])
             bbox.append(detec['score'])
-        bboxes_dict[kfb_name].append(bbox)
+            bboxes_dict[kfb_name].append(bbox)
     return bboxes_dict
 
 
