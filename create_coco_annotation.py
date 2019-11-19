@@ -1,8 +1,11 @@
 import json
-from tianchi import CONSTANT
+#from tianchi import CONSTANT
+import CONSTANT
 import pycocotools.mask as mask
 import os
 import time
+import datetime
+import random
 
 def create_image_info(filename, image_id, data_captured="2019-11-17 00:00:00",
                       flickr_url="http://farm7.staticflickr.com/6116/6255196340_da26cf2c9e_z.jpg",
@@ -53,6 +56,8 @@ def create_coco_dataset(json_name, image_id, ann_id):
     return images, annotations, ann_id
 
 start_time =  time.localtime(time.time())
+
+"""
 TEST_IMAGE_PATH = "/root/DigitalBody/pos_images/VOC2012/datasets"
 files = os.listdir(TEST_IMAGE_PATH)
 image_id = 1
@@ -68,6 +73,58 @@ TEST_COCO["images"] = images
 TEST_COCO["annotations"] = annotations
 with open(TEST_COCO_PATH, "w") as f:
     json.dump(TEST_COCO, f)
+
+
+
+"""
+
+start_time =  datetime.datetime.now()
+
+JSON_PATH = CONSTANT.POS_JSON_PATH
+files = os.listdir(JSON_PATH)
+train_images, train_anns, test_images, test_anns = [], [], [], []
+image_id, ann_id = 1, 1
+
+for file in files:
+    print(image_id, "st image")
+    images, annos, ann_id = create_coco_dataset(file, image_id, ann_id)
+    image_id += 1
+
+    ## 20% images for test/val, 80% images for train
+    if random.uniform(0,1)>0.1:
+        train_images += images
+        train_anns += annos
+    else:
+        test_images += images
+        test_anns += annos
+
+print("start time:", start_time)
+print("end time:", datetime.datetime.now())
+COCODATASET = CONSTANT.COCODATASET
+
+print("train number:")
+print(len(train_images))
+print(len(train_anns))
+
+print("test number:")
+print(len(test_images))
+print(len(test_anns))
+
+TRAINDATASET = {"info": COCODATASET["info"], "licences": COCODATASET["licences"],
+                "categories": COCODATASET["categories"], "images": train_images, "annotations": train_anns}
+
+VALDATASET = {"info": COCODATASET["info"], "licences": COCODATASET["licences"],
+                "categories": COCODATASET["categories"], "images": test_images, "annotations": test_anns}
+
+# print(TRAINDATASET)
+# print("*"*100)
+# print(VALDATASET)
+
+with open(CONSTANT.COCODATASET_TRAIN_PATH, "w") as f:
+    json.dump(TRAINDATASET, f)
+
+with open(CONSTANT.COCODATASET_TEST_PATH, "w") as f:
+    json.dump(VALDATASET, f)
 
 
 
