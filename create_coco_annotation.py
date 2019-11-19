@@ -53,7 +53,25 @@ def create_coco_dataset(json_name, image_id, ann_id):
     return images, annotations, ann_id
 
 start_time =  time.localtime(time.time())
+TEST_IMAGE_PATH = "/root/DigitalBody/pos_images/VOC2012/datasets"
+files = os.listdir(TEST_IMAGE_PATH)
+image_id = 1
+images, annotations = [], []
+for filename in files:
+    print(image_id, "st image")
+    images.append(create_image_info(filename, image_id))
+    image_id += 1
 
+TEST_COCO_PATH = "/root/DigitalBody/pos_images/VOC2012/test_coco.json"
+TEST_COCO = CONSTANT.COCODATASET
+TEST_COCO["images"] = images
+TEST_COCO["annotations"] = annotations
+with open(TEST_COCO_PATH, "w") as f:
+    json.dump(TEST_COCO, f)
+
+
+
+"""
 JSON_PATH = CONSTANT.POS_JSON_PATH
 files = os.listdir(JSON_PATH)
 final_images, final_anns = [], []
@@ -73,7 +91,7 @@ COCODATASET["images"] = final_images
 COCODATASET["annotations"] = final_anns
 with open(CONSTANT.COCODATASET_PATH, "w") as f:
     json.dump(COCODATASET, f)
-
+"""
 
 
 

@@ -56,7 +56,7 @@ COCODATASET["info"] = \
         "date_created": "2017/09/01"
     }
 
-COCODATASET["licence"] = [
+COCODATASET["licences"] = [
     {
         "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
         "id": 1,
