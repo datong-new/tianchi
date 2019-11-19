@@ -56,8 +56,8 @@ if __name__ == "__main__":
     res_json_file = '/data/DigitalBody/pos_images/result_file.pkl.bbox.json'
     final_res_dir = "/data/DigitalBody/tests/final_results"
     # ann_file, res_json_file, final_res_dir = sys.argv[1], sys.argv[2], sys.argv[3]
-    coco = COCO(annFile)
-    with open(result_json_file, 'r') as f:
+    coco = COCO(ann_file)
+    with open(res_json_file, 'r') as f:
         result_json = json.load(f)
     bboxes_dict = nms_bboxes_dict(json2dict(result_json, coco))
     for kfb_name in bboxes_dict:
