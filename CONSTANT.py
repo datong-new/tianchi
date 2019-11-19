@@ -2,6 +2,8 @@ POS_ANNOTATION_PATH = "/data/DigitalBody/pos_images/VOC2012/Annotations/"
 POS_IMAGE_PATH = "/data/DigitalBody/pos_images/VOC2012/JPEGImages/"
 POS_JSON_PATH = "/data/DigitalBody/pos_images/VOC2012/JSON/"
 
+COCODATASET_TRAIN_PATH = "/data/DigitalBody/pos_images/VOC2012/coco_train_annotation.json"
+COCODATASET_TEST_PATH = "/data/DigitalBody/pos_images/VOC2012/coco_test_annotation.json"
 
 PASCAL_XML_HEADER = """
 <annotation>
